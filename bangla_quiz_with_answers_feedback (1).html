@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>বাংলা জেনারেল নলেজ কুইজ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #f1f8e9);
+      margin: 0;
+      padding: 20px;
+    }
+    .quiz-box {
+      max-width: 800px;
+      background: #fff;
+      margin: auto;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #00796b;
+    }
+    .question-block {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+    .question {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .options button {
+      margin: 5px 5px 5px 0;
+      padding: 8px 12px;
+      background-color: #eeeeee;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options button:hover {
+      background-color: #c8e6c9;
+    }
+    #nextBtn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
+    }
+    #timer {
+      font-weight: bold;
+      color: #d32f2f;
+    }
+    #result {
+      font-size: 20px;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-box">
+    <h2>বাংলা জেনারেল নলেজ কুইজ</h2>
+    <div id="timer">সময়: ২০</div>
+    <div id="quizContainer"></div>
+    <button id="nextBtn">পরবর্তী ৫টি প্রশ্ন</button>
+    <div id="result"></div>
+  </div>
+
+  <audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+  <audio id="wrongSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
+
+  <script>
+    const quiz = [
+      {q: "ADB-এর মতে বাংলাদেশ এশিয়ার কততম অর্থনৈতিক দেশ?", o: ["৫ম", "১২তম", "৯ম", "৭ম"], a: "৯ম"},
+      {q: "কানাডার নির্বাচনে কোন দল বিজয়ী হয়েছে?", o: ["কনজারভেটিভ পার্টি", "লিবারেল পার্টি", "নিউ ডেমোক্রেট", "কুইবেক পার্টি"], a: "লিবারেল পার্টি"},
+      {q: "জনপ্রিয় আন্তর্জাতিক পেমেন্ট গেটওয়ে কোনটি?", o: ["বিকাশ", "স্ট্রাইপ", "পেপ্যাল", "ওয়েস্টার্ন ইউনিয়ন"], a: "পেপ্যাল"},
+      {q: "স্টারলিংককে কত বছরের জন্য লাইসেন্স দেওয়া হয়েছে?", o: ["১০ বছর", "১৫ বছর", "৫ বছর", "৭ বছর"], a: "১০ বছর"},
+      {q: "সোনাদিয়া দ্বীপ কোথায়?", o: ["টেকনাফ", "কক্সবাজার", "মহেশখালী", "বাঁশখালী"], a: "মহেশখালী"},
+      {q: "যুক্তরাষ্ট্রের পররাষ্ট্রমন্ত্রী কে?", o: ["জন কেরি", "অ্যান্টনি ব্লিনকেন", "মার্কো রুবিও", "হিলারি ক্লিনটন"], a: "মার্কো রুবিও"},
+      {q: "বিশ্ব সামরিক ব্যয়ে ২০২৪-এ শীর্ষ দেশ কোনটি?", o: ["চীন", "ভারত", "যুক্তরাষ্ট্র", "রাশিয়া"], a: "যুক্তরাষ্ট্র"},
+      {q: "বাংলাদেশকে তথ্যপ্রযুক্তিতে সহায়তা করতে আগ্রহী দেশ?", o: ["জাপান", "সিঙ্গাপুর", "দক্ষিণ কোরিয়া", "সুইজারল্যান্ড"], a: "সিঙ্গাপুর"},
+      {q: "বর্তমানে বাংলাদেশের জিডিপির পরিমাণ?", o: ["৪৫০.৫", "৩৮০", "৫০০", "৪২০.২"], a: "৪৫০.৫"},
+      {q: "বাংলাদেশের বর্তমান অর্থ উপদেষ্টা কে?", o: ["শফিক রেহমান", "সালেহউদ্দিন আহমেদ", "আবুল মাল মুহিত", "মুহিত কামাল"], a: "সালেহউদ্দিন আহমেদ"},
+      {q: "হজ অ্যাপের নাম কী?", o: ["হজপথ", "লাব্বাইক", "তাওয়াফ", "হাজ্জগাইড"], a: "লাব্বাইক"},
+      {q: "স্টারলিংক লাইসেন্স অনুমোদন করেছেন কে?", o: ["মোস্তাফা জব্বার", "মুহাম্মদ ইউনূস", "সজীব ওয়াজেদ", "প্রধানমন্ত্রীর কার্যালয়"], a: "মুহাম্মদ ইউনূস"},
+      {q: "হিউম্যানিটারিয়ান প্যাসেজ বিষয়ে সম্মতি কোন অঞ্চলের জন্য?", o: ["গাজা", "রাখাইন", "কাশ্মীর", "রোহিঙ্গা শিবির"], a: "রাখাইন"},
+      {q: "UAV-এর পূর্ণরূপ কী?", o: ["Unmanned Aerial Vehicle", "Ultra Aviation Vehicle", "Unofficial Aerial Viewer", "United Aviation Vessel"], a: "Unmanned Aerial Vehicle"},
+      {q: "ক্যানসারের প্রধান কারণ?", o: ["ফাস্টফুড", "জিনের মিউটেশন", "তামাক", "ভাইরাস"], a: "জিনের মিউটেশন"},
+      {q: "সর্বোচ্চ মুনাফা করা ব্যাংক কোনটি?", o: ["ইসলামী ব্যাংক", "ব্র্যাক ব্যাংক", "প্রাইম ব্যাংক", "ডাচ্‌ বাংলা"], a: "ব্র্যাক ব্যাংক"},
+      {q: "IAEA এর সদরদপ্তর কোথায়?", o: ["জেনেভা", "ভিয়েনা", "নিউইয়র্ক", "প্যারিস"], a: "ভিয়েনা"},
+      {q: "রাফাল কোন দেশের যুদ্ধবিমান?", o: ["ফ্রান্স", "চীন", "রাশিয়া", "যুক্তরাষ্ট্র"], a: "ফ্রান্স"},
+      {q: "ম্যারি এন কী?", o: ["এক ঘূর্ণিঝড়", "নৃত্যশিল্পী", "জাহাজ", "ভূমিকম্প"], a: "এক ঘূর্ণিঝড়"},
+      {q: "ক্রিমিয়া কোথায় অবস্থিত?", o: ["ভূমধ্যসাগর", "বল্টিক", "কৃষ্ণ সাগর", "উত্তর সাগর"], a: "কৃষ্ণ সাগর"}
+    ];
+
+    let currentSet = 0, score = 0, answered = 0, quizUserAnswers = [];
+    const timerDisplay = document.getElementById("timer");
+    const quizContainer = document.getElementById("quizContainer");
+    const nextBtn = document.getElementById("nextBtn");
+    const result = document.getElementById("result");
+    const correctSound = document.getElementById("correctSound");
+    const wrongSound = document.getElementById("wrongSound");
+    let timer;
+
+    function startTimer() {
+      let time = 20;
+      timerDisplay.textContent = "সময়: " + time;
+      timer = setInterval(() => {
+        time--;
+        timerDisplay.textContent = "সময়: " + time;
+        if (time <= 0) {
+          clearInterval(timer);
+          showNextSet();
+        }
+      }, 1000);
+    }
+
+    function showNextSet() {
+      clearInterval(timer);
+      const start = currentSet * 5;
+      const end = start + 5;
+      if (start >= quiz.length) {
+        showResult();
+        return;
+      }
+
+      quizContainer.innerHTML = '';
+      const currentQuestions = quiz.slice(start, end);
+      currentQuestions.forEach((q, idx) => {
+        const block = document.createElement('div');
+        block.classList.add('question-block');
+        const qDiv = document.createElement('div');
+        qDiv.classList.add('question');
+        qDiv.textContent = `${start + idx + 1}. ${q.q}`;
+        block.appendChild(qDiv);
+        const optDiv = document.createElement('div');
+        optDiv.classList.add('options');
+        [...q.o].sort(() => Math.random() - 0.5).forEach(opt => {
+          const btn = document.createElement('button');
+          btn.textContent = opt;
+          btn.onclick = () => {
+            if (btn.dataset.answered) return;
+            btn.dataset.answered = true;
+            
+    quizUserAnswers[start + idx] = opt;
+            if (opt === q.a) {
+    
+              btn.style.backgroundColor = "#a5d6a7";
+              score++;
+              correctSound.play();
+            } else {
+              btn.style.backgroundColor = "#ef9a9a";
+              wrongSound.play();
+            }
+            answered++;
+          };
+          optDiv.appendChild(btn);
+        });
+        block.appendChild(optDiv);
+        quizContainer.appendChild(block);
+      });
+
+      nextBtn.style.display = 'block';
+      currentSet++;
+      answered = 0;
+      startTimer();
+    }
+
+    
+    function showResult() {
+      clearInterval(timer);
+      quizContainer.innerHTML = '';
+      timerDisplay.style.display = 'none';
+      nextBtn.style.display = 'none';
+      let level = score >= 16 ? "Advanced" : score >= 10 ? "Intermediate" : "Basic";
+      result.innerHTML = `<p>আপনার স্কোর: <strong>${score}/${quiz.length}</strong><br>লেভেল: <strong>${level}</strong></p>`;
+      
+      quiz.forEach((q, idx) => {
+        const block = document.createElement('div');
+        block.classList.add('question-block');
+        const qDiv = document.createElement('div');
+        qDiv.classList.add('question');
+        qDiv.innerHTML = `${idx + 1}. ${q.q}`;
+        block.appendChild(qDiv);
+        const optDiv = document.createElement('div');
+        optDiv.classList.add('options');
+        q.o.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.textContent = opt;
+          btn.disabled = true;
+          
+    quizUserAnswers[start + idx] = opt;
+            if (opt === q.a) {
+    
+            btn.style.backgroundColor = "#a5d6a7"; // correct answer
+          } else if (opt !== q.a && quizUserAnswers[idx] === opt) {
+            btn.style.backgroundColor = "#ef9a9a"; // selected but wrong
+          } else {
+            btn.style.backgroundColor = "#eeeeee"; // neutral
+          }
+          optDiv.appendChild(btn);
+        });
+        block.appendChild(optDiv);
+        quizContainer.appendChild(block);
+      });
+    }
+    
+      quizContainer.innerHTML = '';
+      timerDisplay.style.display = 'none';
+      nextBtn.style.display = 'none';
+      let level = score >= 16 ? "Advanced" : score >= 10 ? "Intermediate" : "Basic";
+      result.innerHTML = `আপনার স্কোর: <strong>${score}/${quiz.length}</strong><br>লেভেল: <strong>${level}</strong>`;
+    }
+
+    nextBtn.onclick = showNextSet;
+    showNextSet();
+  </script>
+</body>
+</html>
